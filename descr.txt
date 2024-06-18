@@ -32,3 +32,9 @@
 Простые числа.
 Числа Фибоначчи.
 Анализатор искусственного языка, созданного к юбилею выдающегося лингвиста и педагога М. А. Даниэля. https://habr.com/ru/company/yandex/blog/219085/
+
+https://www.datawrapper.de/_/rT0yG/ The Ages of Programming Language Creators
+41: XML, mlyr, Modula
+38: Haskell, BASIC
+39: R, SQLite
+40: C#, Tex

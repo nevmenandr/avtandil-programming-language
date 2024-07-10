@@ -39,8 +39,7 @@ https://www.datawrapper.de/_/rT0yG/ The Ages of Programming Language Creators
 39: R, SQLite
 40: C#, Tex
 
-
 https://www.jstor.org/stable/30204310
 Fangorn: A Special-Purpose Language for the Humanities
 Peter Bøgh Andersen
-Computers and the Humanities, Vol. 15, No. 4 (Dec., 1981), pp. 227-242 
+Computers and the Humanities, Vol. 15, No. 4 (Dec., 1981), pp. 227-242

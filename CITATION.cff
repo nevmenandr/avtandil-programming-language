@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+title: Avtandil programming language
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Boris
+    family-names: Orekhov
+    name-particle: Boris Orekhov
+    email: nevmenandr@gmail.com
+    affiliation: HSE University
+    orcid: 'https://orcid.org/0000-0002-9099-0436'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.12814594
+repository-code: >-
+  https://github.com/nevmenandr/avtandil-programming-language
+abstract: >-
+  Esoteric programming language adopted to Digital
+  Humanities tasks. Python implementation.
+keywords:
+  - Digital Humanities
+  - programming language
+license: GPL-3.0

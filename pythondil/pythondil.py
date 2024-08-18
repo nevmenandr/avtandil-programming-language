@@ -13,7 +13,7 @@ import numpy as np
 from scipy.stats import chisquare
 
 BASE_DIR = os.path.dirname(__file__)
-VARS_FILE = os.path.join(BASE_DIR, "avtandil-programming-language", "variables.txt")
+VARS_FILE = os.path.join(BASE_DIR, "..", "variables.txt")
 
 with open(VARS_FILE, encoding='utf-8') as f:
     variables = f.read()
@@ -185,13 +185,13 @@ class AvtandilProgram():
             
 
 def main():
-    with open('avtandil.ebnf', encoding='utf-8') as f:
+    with open(os.path.join(BASE_DIR, 'avtandil.ebnf'), encoding='utf-8') as f:
         grammar = f.read()
     
-    with open('script.avdl', encoding='utf-8') as f:
+    with open(os.path.join(BASE_DIR, 'script.avdl'), encoding='utf-8') as f:
         avdl_code = f.read()
     
-    with open('avtandil-programming-language/variables.txt', encoding='utf-8') as f:
+    with open(os.path.join(BASE_DIR, '..', 'variables.txt'), encoding='utf-8') as f:
         variables = f.read()
     variables = set(variables.split('\n'))
     

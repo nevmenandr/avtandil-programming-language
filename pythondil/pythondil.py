@@ -5,6 +5,7 @@
 # https://github.com/lark-parser/lark/tree/master/lark
 # https://lark-parser.readthedocs.io/en/latest/_static/lark_cheatsheet.pdf
 # https://www.lark-parser.org/ide/
+# https://flit.pypa.io/en/stable/
 
 import os
 import sys

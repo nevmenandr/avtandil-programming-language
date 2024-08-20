@@ -1,19 +1,21 @@
     start: instruction+
-    instruction: OPERATOR NUMBER+     -> operator
-               | "Ⰺ" ( NUMBER~4 | vector | WORD ) -> chi_sq
-               | "ѯ" ( NUMBER~2 | vector | WORD ) -> percent
-               | "ᬈ" ( vector~2 | WORD~2 ) -> corr
-               | WORD NUMBER    -> assign_var
-               | CONDITION NUMBER~2 -> condition_digit
-               | CONDITION NUMBER -> condition_even
-    vector: "『"  NUMBER* "』"
+    instruction: OPERATOR VALUES+ NEWLINE -> operator
+               | "Ⰺ" ( NUMBER~4 | vector | WORD ) NEWLINE -> chi_sq
+               | "ѯ" ( NUMBER~2 | vector | WORD ) NEWLINE -> percent
+               | "ᬈ" ( vector~2 | WORD~2 | vector WORD | WORD vector) NEWLINE -> corr
+               | WORD NUMBER  NEWLINE  -> assign_var
+               | CONDITION NUMBER~2 NEWLINE -> condition_digit
+               | CONDITION NUMBER NEWLINE -> condition_even
+    vector: "『"  VALUES* "』"
     OPERATOR: "ᛝ"|"ᚸ"|"ᛪ"|"ᛄ"
     CONDITION: "𐄷"|"𑚐"|"≈"|"≉"|"អ"
     CONDITION1: "᭕"|"ゅ"
+    VALUES: ( NUMBER+ | NUMBER+ WORD+ | WORD+ NUMBER+ | WORD+ )
     
     NUMBER: (DIGIT+ "," DIGIT+ | DIGIT+ | "∅")
-    WHITESPACE: (" " | "\n" | "\t")+
+    WHITESPACE: (" " | "\t")+
     
     %import common.DIGIT
     %import common.WORD
+    %import common.NEWLINE
     %ignore WHITESPACE

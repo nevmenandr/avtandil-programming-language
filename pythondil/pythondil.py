@@ -11,10 +11,13 @@
 # https://habr.com/ru/articles/776438/
 
 import os
+import re
 import sys
 from lark import Lark
 import numpy as np
 from scipy.stats import chisquare
+
+# WORD = re.compile('[a-z]')
 
 BASE_DIR = os.path.dirname(__file__)
 VARS_FILE = os.path.join(BASE_DIR, "..", "variables.txt")
@@ -35,20 +38,17 @@ class AvtandilProgram():
         sys.exit('☹  {}'.format(msg))
         
     def float_polish(self, value):
+        """Меняем точку на запятую как десятичный разделитель"""
         value = str(value)
         value = value.replace('.', ',')
-        if value.split(',')[1] == '0':
-            return value.split(',')[0]
-        else:
-            return value
+        return value
 
     def assign_var(self, nv):
         """Присваивание переменной, имя которой хранится в словаре vars,
         значения по ключу имени; тут же проверка разрешенного имени"""
         try:
-            name, value = nv.children
-            name = str(name)
-            value = str(value)
+            name = str(nv.children[0])
+            value = str(nv.children[1])
         except:
             name, value = nv
             if type(value) == float:
@@ -62,24 +62,31 @@ class AvtandilProgram():
         return self.vars[name]
     
     def summation(self, num1, num2):
-        return float(num1) + float(num2)
+        return str(round(float(num1) + float(num2), 4))
     
     def subtraction(self, num1, num2):
-        return float(num1) - float(num2)
+        return str(round(float(num1) - float(num2), 4))
     
     def multiplication(self, num1, num2):
-        return float(num1) * float(num2)
+        return str(round(float(num1) * float(num2), 4))
     
     def division(self, num1, num2):
         if num2 == '0':
             return '∅'
-        return float(num1) / float(num2)
+        return str(round(float(num1) / float(num2), 4))
     
     def float_true(self, val):
         if ',' in val:
             return val.replace(',', '.')
         else:
             return val
+    
+    def search_for_value(self, possible_name):
+        try:
+            return self.var(self.float_true(possible_name))
+        except:
+            self.exception('Не задано имя переменной: {}'.format(possible_name))
+        
     
     def run_instruction(self, t):
         if t.data == 'operator':
@@ -90,6 +97,11 @@ class AvtandilProgram():
                 num = str(num)
                 if num == '∅':
                     val = '∅'
+                    break
+                elif len(re.findall('[a-z]', num)):
+                    possible_var = self.search_for_value(num)
+                    numbers.append(possible_var)
+                if num == '\n':
                     break
                 else:
                     numbers.append(self.float_true(num))
@@ -104,25 +116,27 @@ class AvtandilProgram():
                                'ᚸ': self.subtraction,
                                'ᛪ': self.multiplication,
                                'ᛄ': self.division}[oper](val, n)
-            self.assign_var(('𐃰', val))
+            self.assign_var(('𐃰', self.float_polish(val)))
     
         elif t.data == 'chi_sq':
-            square_values = [float(val) for val in t.children]
+            square_values = [float(val) for val in t.children[:-1]]
             ch = chisquare(square_values)
-            val = ch.pvalue
-            self.assign_var(('𐃰', val))
+            val = str(round(ch.pvalue, 4))
+            self.assign_var(('𐃰', self.float_polish(val)))
         
         elif t.data == 'percent':
-            number1, number2 = t.children
-            val = float(number2) / float(number1) * 100
-            self.assign_var(('𐃰', val))
+            number1 = t.children[0]
+            number2 = t.children[1]
+            val = str(round(float(number2) / float(number1) * 100, 4))
+            self.assign_var(('𐃰', self.float_polish(val)))
     
         elif t.data == 'corr':
-            vec1, vec2 = t.children
+            vec1 = t.children[0]
+            vec2 = t.children[1]
             array1 = np.array([float(val) for val in vec1.children])
             array2 = np.array([float(val) for val in vec2.children])
-            val = np.corrcoef(array1, array2)[0][1]  
-            self.assign_var(('𐃰', val))
+            val = str(round(np.corrcoef(array1, array2)[0][1], 4))
+            self.assign_var(('𐃰', self.float_polish(val)))
             
         elif t.data == 'assign_var':
             self.assign_var(t)
@@ -137,7 +151,9 @@ class AvtandilProgram():
             raise SyntaxError('☹ Неизвестная инструкция: %s' % t.data)
     
     def condition_digit(self, cnd):
-        condition, value1, value2 = cnd.children
+        condition = cnd.children[0]
+        value1 = cnd.children[1]
+        value2 = cnd.children[2]
         value1 = float(self.float_true(value1))
         value2 = float(self.float_true(value2))
         
@@ -198,6 +214,7 @@ def main():
     
     with open(os.path.join(BASE_DIR, 'script.avdl'), encoding='utf-8') as f:
         avdl_code = f.read()
+    avdl_code += '\n'
     
     with open(os.path.join(BASE_DIR, '..', 'variables.txt'), encoding='utf-8') as f:
         variables = f.read()
@@ -215,11 +232,12 @@ def main():
                 # if token.type == 'WORD' and token.value not in VARIABLES:
                     # print('☹ Запрещенное имя переменной:', token.value)
     
-    # avt.run_instruction(parse_tree.children[0])
+    # avt.run_instruction(parse_tree.children[4])
     # print(avt.vars['𐃰'])
+    # print(avt.vars)
     
-    avt.run_instruction(parse_tree.children[1])
-    print(avt.vars['𐃰'])
+    # avt.run_instruction(parse_tree.children[1])
+    # print(avt.vars['𐃰'])
     
     # avt.run_instruction(parse_tree.children[2])
     # print(avt.vars['𐃰'])
@@ -244,8 +262,8 @@ def main():
     # avt.run_instruction(parse_tree.children[7])
     # print(avt.vars['𐃰'])
     
-    # avt.assign_var(parse_tree.children[8])
-    # print(avt.vars)
+    avt.assign_var(parse_tree.children[9])
+    print(avt.vars)
     
     return 0
 

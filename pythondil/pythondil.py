@@ -3,9 +3,12 @@
 
 # https://lark-parser.readthedocs.io/en/latest/how_to_use.html
 # https://github.com/lark-parser/lark/tree/master/lark
+# https://github.com/lark-parser/lark/blob/master/lark/grammars/python.lark
 # https://lark-parser.readthedocs.io/en/latest/_static/lark_cheatsheet.pdf
 # https://www.lark-parser.org/ide/
 # https://flit.pypa.io/en/stable/
+# https://proglib.io/p/kompilyator-svoimi-rukami-kratkiy-gid-dlya-nachinayushchih-2024-08-06
+# https://habr.com/ru/articles/776438/
 
 import os
 import sys
@@ -24,9 +27,11 @@ VARIABLES = set(variables.split('\n') + ['𐃰'])
 class AvtandilProgram():
     
     def __init__(self):
+        """Инициализация класса, создание рабочей переменной"""
         self.vars = {'𐃰': ''}
         
     def exception(self, msg):
+        """Вывод исключения, начинается с символа ☹"""
         sys.exit('☹  {}'.format(msg))
         
     def float_polish(self, value):
@@ -38,6 +43,8 @@ class AvtandilProgram():
             return value
 
     def assign_var(self, nv):
+        """Присваивание переменной, имя которой хранится в словаре vars,
+        значения по ключу имени; тут же проверка разрешенного имени"""
         try:
             name, value = nv.children
             name = str(name)
@@ -211,8 +218,8 @@ def main():
     # avt.run_instruction(parse_tree.children[0])
     # print(avt.vars['𐃰'])
     
-    # avt.run_instruction(parse_tree.children[1])
-    # print(avt.vars['𐃰'])
+    avt.run_instruction(parse_tree.children[1])
+    print(avt.vars['𐃰'])
     
     # avt.run_instruction(parse_tree.children[2])
     # print(avt.vars['𐃰'])
@@ -224,8 +231,8 @@ def main():
     # ora1, ora2 = parse_tree.children[4].children
     # print(ora1.type)
     
-    avt.run_instruction(parse_tree.children[4])
-    print(avt.vars)
+    # avt.run_instruction(parse_tree.children[4])
+    # print(avt.vars)
     
     # avt.assign_var(parse_tree.children[4])
     # print(avt.vars)

@@ -9,6 +9,7 @@
 # https://flit.pypa.io/en/stable/
 # https://proglib.io/p/kompilyator-svoimi-rukami-kratkiy-gid-dlya-nachinayushchih-2024-08-06
 # https://habr.com/ru/articles/776438/
+# https://bnfplayground.pauliankline.com/
 
 import os
 import re
@@ -128,7 +129,7 @@ class AvtandilProgram():
             number1 = t.children[0]
             number2 = t.children[1]
             val = str(round(float(number2) / float(number1) * 100, 4))
-            self.assign_var(('𐃰', self.float_polish(val)))
+            self.assign_var(('𐃰', '{} ℅'.format(self.float_polish(val))))
     
         elif t.data == 'corr':
             vec1 = t.children[0]
@@ -142,7 +143,7 @@ class AvtandilProgram():
             self.assign_var(t)
             
         elif t.data == 'condition_digit':
-            self.condition_digit(t)
+            self.assign_var(('𐃰', self.condition_digit(t)))
             
         elif t.data == 'condition_even':
             self.condition_even(t)
@@ -175,13 +176,11 @@ class AvtandilProgram():
             else:
                 return False
         
-        #elif condition == '≉':
-            #value1 = float(float_true(value1))
-            #value2 = float(float_true(value2))
-            #if 0 > value1 - value2 >= 1 and value2 - value1 >= 1:
-                #return True
-            #else:
-                #return False
+        elif condition == '≉':
+            if 0 < value1 - value2 > 1 or 0 < value2 - value1 > 1:
+                return True
+            else:
+                return False
         
         elif condition == 'អ':
             if value1 > value2:
@@ -259,11 +258,8 @@ def main():
     
     # print(avt.condition_digit(parse_tree.children[6]))
     
-    # avt.run_instruction(parse_tree.children[7])
-    # print(avt.vars['𐃰'])
-    
-    avt.assign_var(parse_tree.children[9])
-    print(avt.vars)
+    avt.run_instruction(parse_tree.children[13])
+    print(avt.vars['𐃰'])
     
     return 0
 

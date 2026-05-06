@@ -1,0 +1,38 @@
+start: instruction+
+
+instruction: OPERATOR VALUES+ NEWLINE                     -> operator
+           | "Ⰺ" ( NUMBER~4 | vector | WORD ) NEWLINE     -> chi_sq
+           | "ѯ" ( NUMBER~2 | vector | WORD ) NEWLINE     -> percent
+           | "ᬈ" ( vector~2 | WORD~2 | vector WORD | WORD vector) NEWLINE -> corr
+           | WORD NUMBER  NEWLINE                         -> assign_var
+           | CONDITION NUMBER~2 NEWLINE                   -> condition_digit
+           | CONDITION NUMBER NEWLINE                     -> condition_even
+           | "⊹" NUMBER inline_instruction                -> loop_instruction
+           | "⊹" NUMBER "{" block_instructions "}"        -> loop_block        // ← ДОБАВЛЕНО
+
+inline_instruction: OPERATOR VALUES+                      -> operator_inline
+                  | "Ⰺ" ( NUMBER~4 | vector | WORD )      -> chi_sq_inline
+                  | "ѯ" ( NUMBER~2 | vector | WORD )      -> percent_inline
+                  | "ᬈ" ( vector~2 | WORD~2 | vector WORD | WORD vector) -> corr_inline
+                  | WORD NUMBER                           -> assign_var_inline
+                  | CONDITION NUMBER~2                    -> condition_digit_inline
+                  | CONDITION NUMBER                      -> condition_even_inline
+
+block_instructions: instruction+
+
+vector: "『"  VALUES* "』"
+
+OPERATOR: "ᛝ" | "ᚸ" | "ᛪ" | "ᛄ"
+CONDITION: "𐄷" | "𑚐" | "≈" | "≉" | "អ"
+CONDITION1: "᭕" | "ゅ"
+
+VALUES: ( NUMBER+ | NUMBER+ WORD+ | WORD+ NUMBER+ | WORD+ )
+
+NUMBER: (DIGIT+ "," DIGIT+ | DIGIT+ | "∅")
+
+WHITESPACE: (" " | "\t")+
+
+%import common.DIGIT
+%import common.WORD
+%import common.NEWLINE
+%ignore WHITESPACE

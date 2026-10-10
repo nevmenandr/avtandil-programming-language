@@ -97,6 +97,7 @@
 * читать csv-таблицу `⠝`
 * читать XML `ཀོ`
 * записать строку `𑜸`
+* записать бинарный файл `℔`
 * записать таблицу `⠞`
 * записать форматированный текст `ℌ`
 * записать XML `ᜁ`
@@ -171,7 +172,156 @@
 * ранжировать узлы по центральности `⊷`
 * сделать кластеризацию `ଝ`
 
-### Конечные автоматы
+## Конечные автоматы
 
-* Задание состояний конечного автомата `▞`
-* `☰ ☱ ☲ ☳ ☴ ☵ ☶ ☷`
+* задать начальное состояние `☰`
+* задать промежуточное состояние `☱`
+* задать допускающее состояние `☲`
+* задать состояние ошибки `☷`
+* пропуск символа `☳`
+* повтор символа `☴`
+* запись символа в выходную строку `☵`
+* проверка дополнительного условия `☶`
+* объявление автомата `▞`
+* запуск автомата `☰`
+
+## Структура репозитория 
+
+```
+avtandil/
+│
+├── README.md
+├── examples.md
+├── DESCRIPTION.md
+├── LICENSE
+├── CITATION.cff
+├── pyproject.toml
+├── MANIFEST.in
+│
+├── docs/
+│   ├── grammar.md              # описание со ссылкой на источник истины
+│   ├── operators.md
+│   ├── types.md
+│   └── tutorial.md
+│
+├── identity/
+│   ├── logo.svg
+│   ├── logo.png
+│   ├── favicon.ico
+│   ├── banner.svg
+│   └── palette.md
+│
+├── texts/
+│   ├── manifesto.md
+│   ├── etymology.md
+│   └── design-notes.md
+│
+├── pythondil/
+│   ├── __init__.py
+│   ├── __main__.py
+│   ├── version.py
+│   │
+│   ├── lexer/
+│   │   ├── __init__.py
+│   │   ├── tokens.py
+│   │   └── lexer.py
+│   │
+│   ├── parser/
+│   │   ├── __init__.py
+│   │   ├── ast.py
+│   │   ├── avtandil.ebnf       # <-- единственный источник истины
+│   │   └── parser.py           # загружает avtandil.ebnf из своей папки
+│   │
+│   ├── interpreter/
+│   │   ├── __init__.py
+│   │   ├── environment.py
+│   │   ├── evaluator.py
+│   │   ├── types.py
+│   │   └── operators/
+│   │       ├── __init__.py
+│   │       ├── arithmetic.py
+│   │       ├── strings.py
+│   │       ├── arrays.py
+│   │       ├── texts.py
+│   │       ├── conditions.py
+│   │       ├── loops.py
+│   │       ├── files.py
+│   │       ├── regex.py
+│   │       ├── functions.py
+│   │       └── automata.py
+│   │
+│   ├── stdlib/
+│   │   ├── __init__.py
+│   │   ├── frequency.py
+│   │   ├── internet.py
+│   │   ├── wikipedia.py
+│   │   ├── chess.py
+│   │   ├── ml.py
+│   │   ├── delta.py
+│   │   ├── topics.py
+│   │   ├── graphs.py
+│   │   └── automata.py
+│   │
+│   ├── cli/
+│   │   ├── __init__.py
+│   │   └── main.py
+│   │
+│   └── errors.py
+│
+├── tests/
+│   ├── __init__.py
+│   ├── conftest.py
+│   ├── test_lexer.py
+│   ├── test_parser.py
+│   ├── test_interpreter.py
+│   ├── test_arithmetic.py
+│   ├── test_strings.py
+│   ├── test_arrays.py
+│   ├── test_texts.py
+│   ├── test_conditions.py
+│   ├── test_loops.py
+│   ├── test_files.py
+│   ├── test_regex.py
+│   ├── test_functions.py
+│   ├── test_automata.py
+│   └── test_stdlib.py
+│
+├── examples/
+│   ├── hello.avt
+│   ├── arithmetic.avt
+│   ├── strings.avt
+│   ├── arrays.avt
+│   ├── texts.avt
+│   ├── conditions.avt
+│   ├── loops.avt
+│   ├── files.avt
+│   ├── regex.avt
+│   ├── functions.avt
+│   └── automata.avt
+│
+├── site/
+│   ├── index.html
+│   ├── keyboard.html
+│   ├── css/
+│   │   ├── style.css
+│   │   └── keyboard.css
+│   ├── js/
+│   │   ├── keyboard.js
+│   │   ├── editor.js
+│   │   ├── copy.js
+│   │   └── download.js
+│   ├── data/
+│   │   └── symbols.json
+│   ├── fonts/
+│   │   └── NotoSansSymbols2.woff2
+│   └── assets/
+│       ├── logo.svg
+│       └── favicon.ico
+│
+└── .github/
+    └── workflows/
+        ├── tests.yml
+        ├── publish.yml
+        └── pages.yml
+        
+```

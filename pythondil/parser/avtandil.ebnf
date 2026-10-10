@@ -1,0 +1,446 @@
+// ============================================================
+// Avtandil — грамматика языка
+// ============================================================
+
+%ignore /[ \t]+/
+
+NEWLINE: /\n/
+COMMENT: /❦[^\n]*/
+
+LATIN_LETTER: /[a-z]/
+IDENTIFIER: LATIN_LETTER+
+
+WORK_VAR: "𐃰"
+
+DIGIT: /[0-9]/
+INTEGER: DIGIT+
+DECIMAL: INTEGER "," INTEGER
+NUMBER: DECIMAL | INTEGER
+
+// Строковый литерал: "..." — двойная кавычка внутри запрещена
+STR_LITERAL: /"[^"\n]*"/
+
+// Устаревший разделитель строк (для совместимости с тестами README)
+OLD_STRING_DELIM: "⚘"
+
+TEXT_DELIM: "🕮"
+ARRAY_OPEN: "『"
+ARRAY_CLOSE: "』"
+SPACE_MARKER: "▣"
+
+OP_ADD: "ᛝ"
+OP_SUB: "ᚸ"
+OP_MUL: "ᛪ"
+OP_DIV: "ᛄ"
+OP_CHI2: "Ⰺ"
+OP_CORR: "ᬈ"
+OP_PERCENT: "ѯ"
+
+OP_EQ: "𐄷"
+OP_NEQ: "𑚐"
+OP_APPROX: "≈"
+OP_NOT_APPROX: "≉"
+OP_GT: "អ"
+OP_EVEN: "᭕"
+OP_ODD: "ゅ"
+OP_EXTRA: "Ⱗ"
+
+OP_LOOP: "⊹"
+OP_LOOP_INF: "ਊ"
+OP_LOOP_WORDS: "ສ"
+OP_LOOP_CHARS: "𑚉"
+OP_REVERSE: "⧧"
+OP_BREAK: "𑜐"
+ITER_VAR: "𐂅"
+ITEM_VAR: "♖"
+
+OP_SPLIT: "沙"
+OP_SPLIT_WORDS: "𑜱"
+OP_SPLIT_SENTS: "ま"
+OP_JOIN: "𐎺"
+OP_CUT: "✂"
+OP_LEN: "ᕘ"
+OP_FIND: "🔍︎"
+OP_REPLACE: "ဠ"
+OP_STRIP_PUNCT: "𑜹"
+PUNCT_SET: "𐃨"
+OP_LOWER: "平"
+OP_CYRILLIC: "Җ"
+OP_INTERP: "☘"
+
+TEXT_TITLE: "𐂲"
+TEXT_SUBTITLE: "ҙ"
+TEXT_AUTHOR: "ভ"
+TEXT_PARAGRAPH: "§"
+TEXT_ABZAC: "¶"
+TEXT_SIGNATURE: "𐄨"
+
+ARRAY_DECL: "ᜈ"
+OP_SORT: "金"
+OP_REVERSE_ARR: "ʡ"
+OP_DEL_ELEM: "խ"
+OP_APPEND: "⟴"
+OP_INSERT: "ᙴ"
+OP_ASSOC: "ਲ"
+OP_INDEX: "👁"
+
+OP_RE_FIND: "ɲ"
+OP_RE_REPLACE: "▧"
+
+OP_READ_STR: "✯"
+OP_READ_ARR: "𐊚"
+OP_READ_CSV: "⠝"
+OP_READ_XML: "ཀོ"
+OP_WRITE_STR: "𑜸"
+OP_WRITE_BIN: "℔"
+OP_WRITE_TABLE: "⠞"
+OP_WRITE_MD: "ℌ"
+OP_WRITE_XML: "ᜁ"
+
+OP_PRINT: "✎"
+OP_HELP: "⚜"
+OP_RANDOM: "ᜅᜒ"
+OP_TIME: "ῷ"
+OP_ROMAN_DATE: "ℕ"
+OP_HUMAN_TIME: "Ѧ"
+
+OP_FUNC_DECL: "❃"
+OP_RETURN: "𑚟"
+
+OP_ERROR: "☹"
+
+OP_FREQ: "◈"
+OP_TFIDF: "𐂓"
+OP_TTR: "į"
+OP_WEB_STR: "⌘"
+OP_WEB_TEXT: "枼"
+OP_WEB_ARR: "𐊙"
+OP_WEB_BIN: "𐃏"
+OP_WEB_SITE: "⚛"
+OP_WIKIPEDIA: "☯"
+OP_PGN_LOAD: "अ"
+OP_PGN_META: "☪"
+OP_PGN_BOARD: "⅊"
+OP_ML_TRAIN: "❂"
+OP_ML_TARGET: "☀"
+OP_ML_SAVE: "ଫ"
+OP_ML_PREDICT: "ល"
+OP_DELTA: "𑜗"
+OP_TOPIC: "◎"
+OP_GRAPH_CREATE: "☍"
+OP_GRAPH_RANK: "⊷"
+OP_GRAPH_CLUST: "ଝ"
+
+OP_AUTOMATON: "▞"
+TRI_START: "☰"
+TRI_MID: "☱"
+TRI_ACCEPT: "☲"
+TRI_SKIP: "☳"
+TRI_REPEAT: "☴"
+TRI_RECORD: "☵"
+TRI_CHECK: "☶"
+TRI_ERROR: "☷"
+
+EMPTY: "∅"
+TYPE_NUMBER: "⋈"
+
+// ============================================================
+// ПРАВИЛА
+// ============================================================
+
+program: line_end* statement (line_end+ statement)* line_end*
+
+line_end: NEWLINE
+
+statement: string_assignment
+         | old_string_assignment
+         | assignment
+         | arithmetic
+         | condition
+         | loop
+         | string_op
+         | array_op
+         | text_op
+         | regex_op
+         | file_op
+         | builtin_op
+         | func_decl
+         | func_return
+         | func_call
+         | automaton_decl
+         | automaton_run
+         | error_stmt
+         | comment_stmt
+         | freq_op
+         | tfidf_op
+         | ttr_op
+         | web_op
+         | wikipedia_op
+         | chess_op
+         | ml_op
+         | delta_op
+         | topic_op
+         | graph_op
+
+comment_stmt: COMMENT
+
+// --- Присваивание ---
+string_assignment: IDENTIFIER STR_LITERAL
+
+// Устаревшая форма: IDENTIFIER ⚘ IDENTIFIER
+old_string_assignment: IDENTIFIER OLD_STRING_DELIM IDENTIFIER
+
+assignment: IDENTIFIER value
+
+value: NUMBER
+     | IDENTIFIER
+     | WORK_VAR
+     | STR_LITERAL
+     | EMPTY
+     | array_literal
+     | builtin_call
+     | func_call
+     | arithmetic_expr
+
+// --- Арифметика ---
+arithmetic: arithmetic_expr
+
+arithmetic_expr: OP_ADD operand operand+
+               | OP_SUB operand operand+
+               | OP_MUL operand operand+
+               | OP_DIV operand operand+
+               | OP_CHI2 operand operand operand operand
+               | OP_CORR operand operand
+               | OP_PERCENT operand operand
+
+operand: NUMBER
+       | IDENTIFIER
+       | WORK_VAR
+       | EMPTY
+       | array_literal
+
+// --- Условия ---
+condition: equality_cond
+         | approx_cond
+         | gt_cond
+         | even_cond
+
+equality_cond: OP_EQ operand operand statement
+             | OP_NEQ operand operand statement
+
+approx_cond: OP_APPROX operand operand statement
+           | OP_NOT_APPROX operand operand statement
+
+gt_cond: OP_GT operand operand statement
+
+even_cond: OP_EVEN operand statement
+         | OP_ODD operand statement
+         | OP_EXTRA operand operand statement
+
+// --- Циклы ---
+loop: loop_count
+    | loop_array
+    | loop_infinite
+    | loop_words
+    | loop_chars
+    | loop_break
+    | loop_reverse
+
+loop_count: OP_LOOP NUMBER statement
+loop_array: OP_LOOP array_literal statement
+          | OP_LOOP IDENTIFIER statement
+loop_infinite: OP_LOOP_INF statement*
+loop_words: OP_LOOP_WORDS IDENTIFIER statement
+loop_chars: OP_LOOP_CHARS IDENTIFIER statement
+loop_break: OP_BREAK
+loop_reverse: OP_REVERSE
+
+// --- Строковые операции ---
+string_op: split_op
+         | join_op
+         | cut_op
+         | len_op
+         | find_op
+         | replace_op
+         | strip_punct_op
+         | lower_op
+         | cyrillic_op
+         | interp_op
+
+split_op: OP_SPLIT IDENTIFIER IDENTIFIER
+        | OP_SPLIT_WORDS IDENTIFIER
+        | OP_SPLIT_SENTS IDENTIFIER
+join_op: OP_JOIN separator? operand operand
+       | OP_JOIN separator? array_literal
+separator: SPACE_MARKER | IDENTIFIER
+cut_op: IDENTIFIER IDENTIFIER OP_CUT NUMBER IDENTIFIER
+len_op: OP_LEN operand
+find_op: OP_FIND IDENTIFIER IDENTIFIER
+replace_op: IDENTIFIER OP_REPLACE IDENTIFIER IDENTIFIER IDENTIFIER
+strip_punct_op: OP_STRIP_PUNCT IDENTIFIER
+lower_op: OP_LOWER IDENTIFIER
+cyrillic_op: OP_CYRILLIC IDENTIFIER
+interp_op: OP_INTERP IDENTIFIER
+
+// --- Тексты ---
+text_op: text_decl
+
+text_decl: IDENTIFIER TEXT_DELIM line_end
+           TEXT_TITLE STR_LITERAL line_end
+           text_decl_optional*
+
+text_decl_optional: TEXT_SUBTITLE STR_LITERAL line_end
+                  | TEXT_AUTHOR STR_LITERAL line_end
+                  | TEXT_PARAGRAPH line_end text_decl_abzac*
+                  | TEXT_SIGNATURE STR_LITERAL line_end
+
+text_decl_abzac: TEXT_ABZAC STR_LITERAL line_end
+
+// --- Массивы ---
+array_literal: ARRAY_DECL IDENTIFIER
+             | IDENTIFIER ARRAY_OPEN elements ARRAY_CLOSE
+
+elements: element+
+element: NUMBER | IDENTIFIER | STR_LITERAL
+
+array_op: sort_op
+        | reverse_arr_op
+        | del_elem_op
+        | append_op
+        | insert_op
+        | assoc_op
+        | index_op
+
+sort_op: OP_SORT IDENTIFIER
+reverse_arr_op: OP_REVERSE_ARR IDENTIFIER
+del_elem_op: OP_DEL_ELEM IDENTIFIER NUMBER
+append_op: OP_APPEND IDENTIFIER element
+insert_op: OP_INSERT IDENTIFIER NUMBER element
+assoc_op: OP_ASSOC IDENTIFIER IDENTIFIER
+index_op: OP_INDEX IDENTIFIER NUMBER
+
+// --- Регулярные выражения ---
+regex_op: regex_find | regex_replace
+regex_find: OP_RE_FIND IDENTIFIER IDENTIFIER
+regex_replace: OP_RE_REPLACE IDENTIFIER IDENTIFIER IDENTIFIER
+
+// --- Файлы ---
+file_op: read_str_op
+       | read_arr_op
+       | read_csv_op
+       | read_xml_op
+       | write_str_op
+       | write_bin_op
+       | write_table_op
+       | write_md_op
+       | write_xml_op
+
+read_str_op: IDENTIFIER OP_READ_STR STR_LITERAL
+read_arr_op: IDENTIFIER OP_READ_ARR STR_LITERAL
+read_csv_op: IDENTIFIER OP_READ_CSV STR_LITERAL
+read_xml_op: IDENTIFIER OP_READ_XML STR_LITERAL
+write_str_op: OP_WRITE_STR IDENTIFIER STR_LITERAL
+write_bin_op: OP_WRITE_BIN IDENTIFIER STR_LITERAL
+write_table_op: OP_WRITE_TABLE IDENTIFIER STR_LITERAL
+write_md_op: OP_WRITE_MD IDENTIFIER STR_LITERAL
+write_xml_op: OP_WRITE_XML IDENTIFIER STR_LITERAL
+
+// --- Встроенные функции ---
+builtin_op: builtin_call
+builtin_call: print_call
+            | help_call
+            | random_call
+            | time_call
+            | roman_date_call
+            | human_time_call
+
+print_call: OP_PRINT operand?
+help_call: OP_HELP operand?
+random_call: OP_RANDOM
+time_call: OP_TIME
+roman_date_call: OP_ROMAN_DATE operand
+human_time_call: OP_HUMAN_TIME operand
+
+// --- Пользовательские функции ---
+func_decl: OP_FUNC_DECL IDENTIFIER+ line_end (line_end* statement)*
+func_call: IDENTIFIER operand+
+func_return: OP_RETURN operand?
+
+// --- Ошибка ---
+error_stmt: OP_ERROR STR_LITERAL
+
+// --- Высокоуровневые функции ---
+freq_op: OP_FREQ IDENTIFIER
+tfidf_op: OP_TFIDF IDENTIFIER
+ttr_op: OP_TTR IDENTIFIER
+
+web_op: web_str_op
+      | web_text_op
+      | web_arr_op
+      | web_bin_op
+      | web_site_op
+
+web_str_op: IDENTIFIER OP_WEB_STR STR_LITERAL
+web_text_op: IDENTIFIER OP_WEB_TEXT STR_LITERAL
+web_arr_op: IDENTIFIER OP_WEB_ARR STR_LITERAL
+web_bin_op: IDENTIFIER OP_WEB_BIN STR_LITERAL
+web_site_op: OP_WEB_SITE STR_LITERAL STR_LITERAL?
+
+wikipedia_op: IDENTIFIER OP_WIKIPEDIA STR_LITERAL
+
+chess_op: pgn_load_op
+        | pgn_meta_op
+        | pgn_board_op
+
+pgn_load_op: IDENTIFIER OP_PGN_LOAD STR_LITERAL
+pgn_meta_op: OP_PGN_META IDENTIFIER
+pgn_board_op: OP_PGN_BOARD IDENTIFIER NUMBER
+
+ml_op: ml_train_op
+     | ml_target_op
+     | ml_save_op
+     | ml_predict_op
+
+ml_train_op: OP_ML_TRAIN IDENTIFIER
+ml_target_op: OP_ML_TARGET IDENTIFIER
+ml_save_op: IDENTIFIER OP_ML_SAVE STR_LITERAL
+ml_predict_op: OP_ML_PREDICT IDENTIFIER
+
+delta_op: OP_DELTA STR_LITERAL
+topic_op: OP_TOPIC STR_LITERAL NUMBER?
+
+graph_op: graph_create_op
+        | graph_rank_op
+        | graph_clust_op
+
+graph_create_op: IDENTIFIER OP_GRAPH_CREATE edges
+graph_rank_op: OP_GRAPH_RANK IDENTIFIER
+graph_clust_op: OP_GRAPH_CLUST IDENTIFIER
+
+edges: ARRAY_OPEN edge+ ARRAY_CLOSE
+edge: ARRAY_OPEN element element ARRAY_CLOSE
+
+// --- Конечные автоматы ---
+automaton_decl: state_decl+ OP_AUTOMATON IDENTIFIER IDENTIFIER line_end
+                (transition line_end)*
+
+state_decl: IDENTIFIER state_mark line_end
+
+state_mark: TRI_START
+          | TRI_MID
+          | TRI_ACCEPT
+          | TRI_ERROR
+
+transition: IDENTIFIER IDENTIFIER IDENTIFIER transition_mark?
+
+transition_mark: TRI_START
+               | TRI_MID
+               | TRI_ACCEPT
+               | TRI_SKIP
+               | TRI_REPEAT
+               | TRI_RECORD
+               | TRI_CHECK
+               | TRI_ERROR
+
+automaton_run: IDENTIFIER TRI_START IDENTIFIER
+

@@ -1,0 +1,19 @@
+initium ☰
+medium ☱
+finis ☲
+error ☷
+▞ initium finis
+initium < nomen
+initium > error ☷
+nomen a nomen
+nomen b nomen
+nomen > finis ☲
+nomen < error ☷
+finis a error ☷
+finis b error ☷
+finis < error ☷
+finis > error ☷
+error < error ☷
+error > error ☷
+error a error ☷
+error b error ☷
